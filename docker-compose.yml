@@ -20,7 +20,40 @@ services:
     volumes:
       - ${JENKINS_LOCAL_HOME}:/var/jenkins_home
       - ${HOST_DOCKER_SOCK}:/var/run/docker.sock
-
+      
+      
+  sonarqube:
+    image: sonarqube:8.9-community
+    container_name: cicd-sonarqube
+    restart: unless-stopped
+    networks:
+      - jenkins
+    ports:
+      - "9000:9000"    # http
+      - "9003:443"   # https
+    volumes:
+      - /opt/sonarqube/conf:/opt/sonarqube/conf
+      - /opt/sonarqube/data:/opt/sonarqube/data
+      - /opt/sonarqube/extensions:/opt/sonarqube/extensions
+      
+   db:
+    # default ports 80, 443 - expose mapping as needed to host
+    image: postgres
+    container_name: cicd-postgres
+    restart: unless-stopped
+    networks:
+      - jenkins
+    ports:
+      - "9000:9000"    # http
+      - "9003:443"   # https
+    environment:
+      - POSTGRES_USER=sonar
+      - POSTGRES_PASSWORD=sonar
+      - POSTGRES_DB=sonarqube
+    volumes:
+      - /var/lib/postgresql:/var/lib/postgresql
+      - /var/lib/postgresql/data:/var/lib/postgresql/data
+      
   nginx:
     # default ports 80, 443 - expose mapping as needed to host
     image: nginx:1
