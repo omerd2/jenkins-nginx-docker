@@ -14,7 +14,7 @@ services:
       - "50000:50000"
     environment:
       # Uncomment JENKINS_OPTS to add prefix: e.g. https://127.0.0.1:8443/jenkins
-      #- JENKINS_OPTS="--prefix=/jenkins"
+      - JENKINS_OPTS="--prefix=/jenkins"
       - JENKINS_UID=${JENKINS_UID}
       - JENKINS_GID=${JENKINS_GID}
     volumes:
