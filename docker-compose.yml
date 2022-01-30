@@ -36,7 +36,7 @@ services:
       - /opt/sonarqube/data:/opt/sonarqube/data
       - /opt/sonarqube/extensions:/opt/sonarqube/extensions
       
-   db:
+    db:
     # default ports 80, 443 - expose mapping as needed to host
     image: postgres
     container_name: cicd-postgres
