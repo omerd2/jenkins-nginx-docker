@@ -1,8 +1,7 @@
-version: "3.9"
+version: "2.2"
 services:
 
   jenkins:
-    # default ports 8080, 50000 - expose mapping as needed to host
     build:
       context: ./jenkins
       dockerfile: Dockerfile
@@ -21,21 +20,23 @@ services:
       - ${JENKINS_LOCAL_HOME}:/var/jenkins_home
       - ${HOST_DOCKER_SOCK}:/var/run/docker.sock
 
-  nginx:
-    # default ports 80, 443 - expose mapping as needed to host
-    image: nginx:1
-    container_name: cicd-nginx
+  sonarqube:
+          image: sonarqube:8.9-community
+    container_name: cicd-sonarqube
     restart: unless-stopped
     networks:
       - jenkins
     ports:
-      - "8080:80"    # http
-      - "8443:443"   # https
+      - "9000:9000"    # http
     volumes:
-      - ${JENKINS_LOCAL_HOME}:/var/jenkins_home
-      - ${NGINX_CONF}:/etc/nginx/conf.d/default.conf
-      - ${NGINX_SSL_CERTS}:/etc/ssl
-      - ${NGINX_LOGS}:/var/log/nginx
+      - ${SONARQUBE_CONF}:/opt/sonarqube/conf
+      - ${SONARQUBE_DATA}:/opt/sonarqube/data
+      - ${SONARQUBE_EXTENSIONS}:/opt/sunarqube/extensions
+      - ${SONARQUBE_BUNDLED-PLUGINS}:/opt/sonarqube/lib/bundled-plugins
+    environment:
+      - sonar.jdbc.username=sonar
+      - sonar.jdbc.password=sonar
+      - sonar.jdbc.url=jdbc:postgresql://db:5432/sonar
 
 networks:
   jenkins:
